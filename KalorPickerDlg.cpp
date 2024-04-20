@@ -62,6 +62,7 @@ BOOL CKalorPickerDlg::OnInitDialog()
 	pen.CreatePen(PS_SOLID, 1, RGB(0, 0, 0));
 
 	RegisterHotKey(this->m_hWnd, HK_GET, MOD_CONTROL, VK_OEM_3); // " Ctrl + ` "
+	RegisterHotKey(this->m_hWnd, HK_GETRGB, MOD_CONTROL | MOD_SHIFT, VK_OEM_3); // " Ctrl + Shift + ` "
 
 	CRect rect;
 	CWnd* dWnd;
@@ -71,7 +72,7 @@ BOOL CKalorPickerDlg::OnInitDialog()
 
 	MoveWindow(rect.right - 300, 0, WIDTH, HEIGHT, 1);
 
-	SetTimer(1012, 100, NULL);
+	SetTimer(7837, 100, NULL);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -134,7 +135,7 @@ void CKalorPickerDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 {
 	// TODO: Add your message handler code here and/or call default
 
-	if (nHotKeyId == HK_GET) {
+	if (nHotKeyId == HK_GET || nHotKeyId == HK_GETRGB) {
 		CPoint curPos;
 		GetCursorPos(&curPos);
 		HDC hDesktopDC = ::GetDC(NULL);
@@ -142,7 +143,10 @@ void CKalorPickerDlg::OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2)
 			COLORREF color = GetPixel(hDesktopDC, cursorPos.x, cursorPos.y);
 
 			wchar_t colorStr[20];
-			wsprintf(colorStr, L"#%.2X%.2X%.2X", GetRValue(color), GetGValue(color), GetBValue(color));
+			if(nHotKeyId == HK_GET) 
+				wsprintf(colorStr, L"#%.2X%.2X%.2X", GetRValue(color), GetGValue(color), GetBValue(color));
+			else
+				wsprintf(colorStr, L"RGB(%d, %d, %d)", GetRValue(color), GetGValue(color), GetBValue(color));
 			CString col(colorStr);
 			
 			if (::OpenClipboard(NULL))
@@ -174,7 +178,7 @@ void CKalorPickerDlg::OnTimer(UINT_PTR nIDEvent)
 	// TODO: Add your message handler code here and/or call default
 	//Invalidate();
 
-	if (nIDEvent == 1012) {
+	if (nIDEvent == 7837) {
 		GetCursorPos(&cursorPos);
 		CRect rect(cursorPos.x - WIDTH / 2, cursorPos.y - HEIGHT / 2, cursorPos.x + WIDTH / 2, cursorPos.y + HEIGHT / 2);
 		CBitmap bmp;
@@ -286,7 +290,8 @@ void CKalorPickerDlg::OnZoomout()
 void CKalorPickerDlg::OnZExit()
 {
 	// TODO: Add your command handler code here
-	KillTimer(1012);
+	KillTimer(7837);
+	PostQuitMessage(WM_QUIT);
 
-	CDialogEx::OnCancel();
+//	CDialogEx::OnCancel();
 }

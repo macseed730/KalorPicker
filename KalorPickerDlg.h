@@ -5,6 +5,7 @@
 #pragma once
 
 #define HK_GET 1616
+#define HK_GETRGB 1617
 
 // CKalorPickerDlg dialog
 class CKalorPickerDlg : public CDialogEx
