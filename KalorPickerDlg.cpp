@@ -291,7 +291,21 @@ void CKalorPickerDlg::OnZExit()
 {
 	// TODO: Add your command handler code here
 	KillTimer(7837);
-	PostQuitMessage(WM_QUIT);
+
+
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	si.dwFlags = STARTF_USESHOWWINDOW;
+	si.wShowWindow = SW_HIDE;
+	ZeroMemory(&pi, sizeof(pi));
+	wchar_t s[] = L"C:\\Windows\\System32\\cmd.exe";
+	DWORD currentProcessID = GetCurrentProcessId();
+
+	wchar_t quitcmd[102];
+	wsprintf(quitcmd, L"/c taskkill /PID %d /f", currentProcessID);
+	CreateProcess(s, quitcmd, NULL, NULL, FALSE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 
 //	CDialogEx::OnCancel();
 }
